@@ -5,7 +5,7 @@ from config import db
 # Artist ---< Albums ---< Songs
 # no fk     artist_id   album_id
 
-class Artist(db.Model):
+class Artist(db.Model, SerializerMixin):
     
     __tablename__ = 'artist_table'
 
@@ -14,7 +14,7 @@ class Artist(db.Model):
 
     # RELATIONSHIPS
 
-    albums = db.relationship('Album', back_populates='artist')
+    albums = db.relationship('Album', back_populates='artist', cascade="all, delete-orphan")
     # arg 1 = name of the other class
     # arg 2 = back populates --> the name of the method in the other class pointing to this class
 
@@ -22,8 +22,10 @@ class Artist(db.Model):
     # arg 1 = relationship name we're going through
     # arg 2 = the relationship that brings us to our final destination
 
+    serialize_rules = ("-albums.artist",)
 
-class Album(db.Model):
+
+class Album(db.Model, SerializerMixin):
     
     __tablename__ = 'album_table'
 
@@ -36,11 +38,12 @@ class Album(db.Model):
     # RELATIONSHIPS
 
     artist = db.relationship('Artist', back_populates='albums')
+    songs = db.relationship('Song', back_populates='album', cascade="all, delete-orphan")
 
-    songs = db.relationship('Song', back_populates='album')
+    serialize_rules = ("-artist.albums", "-songs.album")
 
 
-class Song(db.Model):
+class Song(db.Model, SerializerMixin):
     
     __tablename__ = 'song_table'
 
@@ -52,5 +55,6 @@ class Song(db.Model):
     # RELATIONSHIPS
 
     album = db.relationship('Album', back_populates='songs')
-
     artist = association_proxy('album', 'artist')
+
+    serialize_rules = ("-album.songs",)
