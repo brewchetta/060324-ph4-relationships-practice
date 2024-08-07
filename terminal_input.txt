@@ -1,0 +1,75 @@
+>>> Album
+<class 'models.Album'>
+>>> Artist
+<class 'models.Artist'>
+>>> Song
+<class 'models.Song'>
+>>> a1 = Artist(name="Meatloaf")
+>>> a1
+<Artist (transient 129200275138160)>
+>>> db.session.add( a1 )
+>>> db.session.commit()
+>>> a2 = Artist(name="The Strokes")
+>>> db.session( a2 )
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+TypeError: __call__() takes 1 positional argument but 2 were given
+>>> db.session.add( a2 )
+>>> db.session.commit()
+>>> alb1 = Album(title="Bat Outta Hell", date_of_release=
+... 
+... 
+... )
+  File "<console>", line 4
+    )
+    ^
+SyntaxError: invalid syntax
+>>> import datetime
+>>> alb1 = Album(title="Bat Outta Hell",
+... date_of_release=datetime.strptime('10-21-1977','%m-%d-%Y'),
+... artist_id=a1.id)
+Traceback (most recent call last):
+  File "<console>", line 2, in <module>
+AttributeError: module 'datetime' has no attribute 'strptime'
+>>> from datetime import datetime
+>>> alb1 = Album(title="Bat Outta Hell",
+... date_of_release=datetime.strptime('10-21-1977','%m-%d-%Y'),
+... artist_id=a1.id)
+>>> db.session.add(alb1)
+>>> db.session.commit()
+>>> s1 = Song(title="Bat Out of Hell", album_id=alb1.id)
+>>> db.session.add(s1)
+>>> db.session.commit()
+>>> s2 = Song(title="Heaven Can Wait", album_id=alb1.id)
+>>> s3 = Song(title="Two Out Of Three Ain't Bad", album_id=alb1.id)
+>>> song_titles_list = ["For Crying Out Loud", "You Took the Words Right Out of My Mouth", "All Revved Up With No Place to Go"]
+>>> songs_list = [ Song(title=s, album_id=alb1.id) for s in song_titles_list ]
+>>> songs_list
+[<Song (transient 129200275137968)>, <Song (transient 129200273874656)>, <Song (transient 129200273671504)>]
+>>> db.session.add_all(songs_list)
+>>> db.session.commit()
+>>> db.session.add(s2)
+>>> db.session.add(s3)
+>>> db.session.commit()
+>>> Song.query.all()
+[<Song 1>, <Song 2>, <Song 3>, <Song 4>, <Song 5>, <Song 6>]
+>>> a1
+<Artist 1>
+>>> a1.albums
+[<Album 1>]
+>>> alb1.songs
+[<Song 1>, <Song 2>, <Song 3>, <Song 4>, <Song 5>, <Song 6>]
+>>> s1
+<Song 1>
+>>> s1.album
+<Album 1>
+>>> alb1.artist
+<Artist 1>
+>>> a1.songs
+[[<Song 1>, <Song 2>, <Song 3>, <Song 4>, <Song 5>, <Song 6>]]
+>>> s1
+<Song 1>
+>>> s1.artist
+<Artist 1>
+>>> 
+now exiting InteractiveConsole...

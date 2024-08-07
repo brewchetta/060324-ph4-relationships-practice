@@ -2,7 +2,7 @@
 
 from flask import request
 from config import app, db
-# from models import MODELS GO HERE
+from models import Artist, Album, Song
 
 @app.get('/')
 def index():
